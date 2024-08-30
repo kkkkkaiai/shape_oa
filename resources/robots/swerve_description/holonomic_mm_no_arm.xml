@@ -1,0 +1,137 @@
+<mujoco model="swerve_robot">
+  <compiler angle="radian" meshdir="../meshes/holonomic/"/>
+  <default class="main">
+    <default class="swerve">
+      <default class="visual">
+        <geom type="mesh" contype="0" conaffinity="0" group="2" density="0" material="black"/>
+      </default>
+      <default class="steer_visual">
+        <geom type="mesh" contype="0" conaffinity="0" group="2" density="0" material="steer_color"/>
+      </default>
+      <default class="wheel_visual">
+        <geom type="mesh" contype="0" conaffinity="0" group="2" density="0" material="wheel_color"/>
+      </default>
+      <default class="collision">
+        <geom group="3" type="mesh"/>
+        <default class="caster">
+          <geom type="sphere" size=".02" pos="-0.24 0 .02" condim="1" priority="1"/>
+        </default>
+        <default class="rubber">
+          <geom condim="6" friction="0.8 0.02 0.01" priority="1"/>
+        </default>
+      </default>
+      <default class="steer">
+        <joint damping="1"/>
+        <default class="wheel">
+          <joint damping=".3"/>
+          <motor ctrlrange="-1 1" gear="3" forcerange="-100 100"/>
+        </default>
+      </default>
+    </default>
+  </default>
+
+  <visual>
+    <headlight diffuse="0.6 0.6 0.6" ambient="0.3 0.3 0.3" specular="0 0 0"/>
+    <rgba haze="0.15 0.25 0.35 1"/>
+    <global azimuth="120" elevation="-20"/>
+  </visual>
+  
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0" width="512" height="3072"/>
+    <texture type="2d" name="groundplane" builtin="checker" mark="edge" rgb1="0.2 0.3 0.4" rgb2="0.1 0.2 0.3"
+      markrgb="0.8 0.8 0.8" width="300" height="300"/>
+    <material name="groundplane" texture="groundplane" texuniform="true" texrepeat="5 5" reflectance="0.2"/>
+    <material name="black" rgba="0.95 0.95 0.95 1"/>
+    <material name="steer_color" rgba="0.75294 0.75294 0.75294 1"/>
+    <material name="wheel_color" rgba="1 0.75294 0.75294 1"/>
+    <mesh name="base_link" file="base_link.STL"/>
+    <mesh name="turn_front_left_link" file="turn_front_left_link.STL"/>
+    <mesh name="turn_front_right_link" file="turn_front_right_link.STL"/>
+    <mesh name="turn_back_left_link" file="turn_back_left_link.STL"/>
+    <mesh name="turn_back_right_link" file="turn_back_right_link.STL"/>
+    <mesh name="wheel_front_left_link" file="wheel_front_left_link.STL"/>
+    <mesh name="wheel_front_right_link" file="wheel_front_right_link.STL"/>
+    <mesh name="wheel_back_left_link" file="wheel_back_left_link.STL"/>
+    <mesh name="wheel_back_right_link" file="wheel_back_right_link.STL"/>
+  </asset>
+  
+  <worldbody>
+    <geom name="floor" size="0 0 0.05" pos="0 0 -0.05" type="plane" material="groundplane"/>
+    <light pos="0 0.0 1.5" dir="0 0 -1" directional="true"/>
+
+    <body name="base_link" childclass="swerve" pos="0 0 0.0">
+      <inertial pos="0 0 0" mass="10" diaginertia="0.107027 0.0980771 0.0244531"/>
+      <joint type="free" limited="false" actuatorfrclimited="false"/>
+      <geom class="visual" mesh="base_link"/>
+      <geom class="collision" mesh="base_link"/>
+      <body name="leg_fl" childclass="steer" pos="0.285 0.215 0.1705" quat="0 -1 0 0">
+        <joint name="left_front_steer_joint" pos="0 0 0" axis="0 0 1" range="-3.341 3.341"/>
+        <geom class="steer_visual" mesh="turn_front_left_link"/>
+        <geom class="collision" mesh="turn_front_left_link"/>
+        <body name="wheel_fl" childclass="wheel" pos="0 0.00 0.101" quat="0.707 0.707 0 0">
+          <joint name="left_front_wheel_joint" pos="0 0 0" axis="0 0 1" range="-3.1416 3.1416"/>
+          <geom class="wheel_visual" mesh="wheel_front_left_link"/>
+          <geom class="collision" mesh="wheel_front_left_link"/>
+        </body>
+      </body>
+      <body name="leg_fr" childclass="steer" pos="0.285 -0.215 0.1705" quat="0 -1 0 0">
+        <joint name="right_front_steer_joint" pos="0 0 0" axis="0 0 1" range="-3.341 3.341"/>
+        <geom class="steer_visual" mesh="turn_front_right_link"/>
+        <geom class="collision" mesh="turn_front_right_link"/>
+        <body name="wheel_fr" childclass="wheel" pos="0 0 0.101" quat="0.707 -0.707 0 0">
+          <joint name="right_front_wheel_joint" pos="0 0 0" axis="0 0 1" range="-3.1416 3.1416"/>
+          <geom class="wheel_visual" mesh="wheel_front_right_link"/>
+          <geom class="collision" mesh="wheel_front_right_link"/>
+        </body>
+      </body>
+      <body name="leg_rl" childclass="steer" pos="-0.285 0.215 0.1705" quat="0 -1 0 0">
+        <joint name="left_back_steer_joint" pos="0 0 0" axis="0 0 1" range="-3.341 3.341"/>
+        <geom class="steer_visual" mesh="turn_back_left_link"/>
+        <geom class="collision" mesh="turn_back_left_link"/>
+        <body name="wheel_rl" childclass="wheel" pos="0 0 0.101" quat="0.707 0.707 0 0">
+          <joint name="left_back_wheel_joint" pos="0 0 0" axis="0 0 1" range="-3.1416 3.1416"/>
+          <geom class="wheel_visual" mesh="wheel_back_left_link"/>
+          <geom class="collision" mesh="wheel_back_left_link"/>
+        </body>
+      </body>
+      <body name="leg_rr" childclass="steer" pos="-0.285 -0.215 0.1705" quat="0 -1 0 0">
+        <joint name="right_back_steer_joint" pos="0 0 0" axis="0 0 1" range="-3.341 3.341"/>
+        <geom class="steer_visual" mesh="turn_back_right_link"/>
+        <geom class="collision" mesh="turn_back_right_link"/>
+        <body name="wheel_rr" childclass="wheel" pos="0 0 0.101" quat="0.707 -0.707 0 0">
+          <joint name="right_back_wheel_joint" pos="0 0 0" axis="0 0 1" range="-3.1416 3.1416"/>
+          <geom class="wheel_visual" mesh="wheel_back_right_link"/>
+          <geom class="collision" mesh="wheel_back_right_link"/>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <contact>
+    <exclude body1="base_link" body2="wheel_fl"/>
+    <exclude body1="base_link" body2="wheel_fr"/>
+    <exclude body1="base_link" body2="wheel_rl"/>
+    <exclude body1="base_link" body2="wheel_rr"/>
+  </contact>
+
+  <tendon>
+    <fixed name="forward">
+      <joint joint="left_front_wheel_joint" coef=".3"/>
+      <joint joint="right_front_wheel_joint" coef=".3"/>
+      <joint joint="left_back_wheel_joint" coef=".3"/>
+      <joint joint="right_back_wheel_joint" coef=".3"/>
+    </fixed>
+
+    <fixed name="backward">
+      <joint joint="left_front_wheel_joint" coef="-.3"/>
+      <joint joint="right_front_wheel_joint" coef="-.3"/>
+      <joint joint="left_back_wheel_joint" coef="-.3"/>
+      <joint joint="right_back_wheel_joint" coef="-.3"/>
+    </fixed>
+  </tendon>
+
+  <actuator>
+    <motor name="forward" tendon="forward" class="wheel"/>
+    <motor name="backward" tendon="backward" class="wheel"/>
+  </actuator>
+</mujoco>
